@@ -10,6 +10,7 @@ import GovDocsPage from "./pages/GovDocsPage";
 import GadgetsPage from "./pages/GadgetsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import AdminPage from "./pages/AdminPage";
 
 const PageRenderer = () => {
   const { currentPage } = useNav();
@@ -23,6 +24,7 @@ const PageRenderer = () => {
       case "gadgets":   return <GadgetsPage />;
       case "about":     return <AboutPage />;
       case "contact":   return <ContactPage />;
+      case "admin":     return <AdminPage />;
       default:          return <HomePage />;
     }
   };

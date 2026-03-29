@@ -77,50 +77,21 @@ const ContactPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const encodeForm = (data: Record<string, string>) =>
-    Object.entries(data)
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-      .join("&");
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const useNetlifyForm = import.meta.env.PROD;
-    const targetUrl = useNetlifyForm
-      ? "/"
-      : "http://localhost:4000/api/contacts";
-
-    const body = useNetlifyForm
-      ? encodeForm({
-          "form-name": "contact",
-          "bot-field": "",
-          name: form.name,
-          phone: form.phone,
-          email: form.email,
-          service: form.service,
-          message: form.message,
-        })
-      : JSON.stringify(form);
-
     try {
-      const response = await fetch(targetUrl, {
+      const response = await fetch("/api/contacts", {
         method: "POST",
-        headers: {
-          "Content-Type": useNetlifyForm
-            ? "application/x-www-form-urlencoded"
-            : "application/json",
-        },
-        body,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
       });
 
       if (!response.ok) {
-        if (!useNetlifyForm) {
-          const data = await response.json();
-          throw new Error(data?.error || "Unable to send your message.");
-        }
-        throw new Error("Unable to send your message.");
+        const data = await response.json();
+        throw new Error(data?.error || "Unable to send your message.");
       }
 
       setSubmitted(true);
@@ -182,9 +153,7 @@ const ContactPage = () => {
                     <p className="text-gray-500">Thank you! We'll contact you shortly at your number.</p>
                   </div>
                 ) : (
-                  <form action="/" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={handleSubmit} className="space-y-5">
-                    <input type="hidden" name="form-name" value="contact" />
-                    <input type="hidden" name="bot-field" />
+                  <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                       <div>
                         <label className="block text-sm font-bold text-gray-700 mb-1.5">Full Name *</label>
