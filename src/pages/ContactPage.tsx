@@ -77,23 +77,50 @@ const ContactPage = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const encodeForm = (data: Record<string, string>) =>
+    Object.entries(data)
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .join("&");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+    const useNetlifyForm = import.meta.env.PROD;
+    const targetUrl = useNetlifyForm
+      ? "/"
+      : "http://localhost:4000/api/contacts";
+
+    const body = useNetlifyForm
+      ? encodeForm({
+          "form-name": "contact",
+          "bot-field": "",
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          service: form.service,
+          message: form.message,
+        })
+      : JSON.stringify(form);
+
     try {
-      const response = await fetch("http://localhost:4000/api/contacts", {
+      const response = await fetch(targetUrl, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": useNetlifyForm
+            ? "application/x-www-form-urlencoded"
+            : "application/json",
         },
-        body: JSON.stringify(form),
+        body,
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data?.error || "Unable to send your message.");
+        if (!useNetlifyForm) {
+          const data = await response.json();
+          throw new Error(data?.error || "Unable to send your message.");
+        }
+        throw new Error("Unable to send your message.");
       }
 
       setSubmitted(true);
