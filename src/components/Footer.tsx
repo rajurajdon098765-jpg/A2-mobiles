@@ -155,6 +155,8 @@ const Footer = () => {
               <a href="mailto:armobile2022@gmail.com" className="hover:text-pink-400 transition">✉️ Email Us</a>
               <span className="text-gray-700">|</span>
               <span className="text-pink-400">📍 Tirupur</span>
+              <span className="text-gray-700">|</span>
+              <button onClick={() => navigate("admin")} className="hover:text-pink-400 transition">Admin</button>
             </div>
           </div>
         </div>

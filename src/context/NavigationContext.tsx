@@ -7,7 +7,8 @@ export type Page =
   | "govdocs"
   | "gadgets"
   | "contact"
-  | "about";
+  | "about"
+  | "admin";
 
 interface NavContextType {
   currentPage: Page;
