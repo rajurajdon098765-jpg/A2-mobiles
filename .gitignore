@@ -7,3 +7,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 contacts.sqlite
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
